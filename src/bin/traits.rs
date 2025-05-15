@@ -1,4 +1,4 @@
-use std::ops;
+use std::{fmt::format, ops, u32};
 fn main() {
     println!("inside traits");
 
@@ -75,11 +75,42 @@ fn main() {
 
     // assert_eq!(sum(1, 2), 3);
 
-// Example 7 ---------------------------------
+    // Example 7 ---------------------------------
 
-example1();
+    // let duck = Duck;
+    // duck.swim();
 
+    // let bird = hatch_a_bird(2);
+    // assert_eq!(bird.quack(), "duckkkkk");
 
+    // let bird = hatch_a_bird(1);
+    // assert_eq!(bird.quack(), "swannnn");
+
+    // Example 8 ---------------------------------
+
+    // let birds: Vec<Box<dyn Bird>> = vec![Box::new(Duck), Box::new(Swan)];
+
+    // for bird in birds {
+    //     bird.quack();
+    // }
+
+    // Example 9 ---------------------------------
+
+    //     let x = 1.1f64;
+    //     let y = 8u8;
+
+    //     let z = Box::new (&x);
+
+    //    draw_with_box(Box::new (x));
+
+    //    draw_with_ref(&y);
+
+    // Example 10 ---------------------------------
+    let x = 5u8;
+    let y = "Hello".to_string();
+
+    static_dispatch(&x);
+    dynamic_dispatch(&y);
     println!("Success!");
 }
 
@@ -256,38 +287,128 @@ example1();
 //     x + y
 // }
 
-
-
 // Example 7 ---------------------------------
-fn example1() {
-    // `T: Trait` is the commonly used way.
-    // `T: Fn(u32) -> u32` specifies that we can only pass a closure to `T`.
-    struct Cacher<T: Fn(u32) -> u32> {
-        calculation: T,
-        value: Option<u32>,
-    }
 
-    impl<T: Fn(u32) -> u32> Cacher<T> {
-        fn new(calculation: T) -> Cacher<T> {
-            Cacher {
-                calculation,
-                value: None,
-            }
-        }
+// trait Bird {
+//     fn quack(&self) -> String;
+// }
+// struct Duck;
+// impl Duck {
+//     fn swim(&self) {
+//         println!("Look, the duck is swimming")
+//     }
+// }
+// struct Swan;
+// impl Swan {
+//     fn fly(&self) {
+//         println!("Look, the duck.. oh sorry, the swan is flying")
+//     }
+// }
 
-        fn value(&mut self, arg: u32) -> u32 {
-            match self.value {
-                Some(v) => v,
-                None => {
-                    let v = (self.calculation)(arg);
-                    self.value = Some(v);
-                    v
-                },
-            }
-        }
-    }
+// impl Bird for Duck {
+//     fn quack(&self) -> String {
+//         "duckkkkk".to_string()
+//     }
+// }
 
-    let mut cacher = Cacher::new(|x| x+1);
-    assert_eq!(cacher.value(10),12 );
-    assert_eq!(cacher.value(15), 15);
+// impl Bird for Swan {
+//     fn quack(&self) -> String {
+//         "swannnn".to_string()
+//     }
+// }
+
+// fn hatch_a_bird(data_type: u32) -> Box<dyn Bird> {
+//     if (data_type == 1) {
+//         Box::new(Swan {})
+//     } else {
+//         Box::new(Duck {})
+//     }
+// }
+
+// Example 8 ---------------------------------
+
+trait Bird {
+    fn quack(&self);
 }
+
+struct Duck;
+impl Duck {
+    fn fly(&self) {
+        println!("Duck is flying");
+    }
+}
+
+struct Swan;
+impl Swan {
+    fn fly(&self) {
+        println!("swan is flying");
+    }
+}
+
+impl Bird for Duck {
+    fn quack(&self) {
+        println!("{}", "duck");
+    }
+}
+
+impl Bird for Swan {
+    fn quack(&self) {
+        println!("{}", "swan");
+    }
+}
+
+// Example 9 ---------------------------------
+
+trait Draw {
+    fn draw(&self) -> String;
+}
+
+impl Draw for u8 {
+    fn draw(&self) -> String {
+        format!("u8: {}", *self)
+    }
+}
+
+impl Draw for f64 {
+    fn draw(&self) -> String {
+        format!("f64: {}", *self)
+    }
+}
+
+fn draw_with_box(x: Box<dyn Draw>) {
+    x.draw();
+}
+
+fn draw_with_ref(x: &u8) {
+    x.draw();
+}
+
+// Example 10 ---------------------------------
+trait Foo {
+    fn method(&self) -> String;
+}
+
+impl Foo for u8 {
+    fn method(&self) -> String {
+        "abc".to_string()
+    }
+}
+
+impl Foo for String {
+    fn method(&self) -> String {
+        format!("string: {}", *self)
+    }
+}
+
+fn static_dispatch(x: &u8){
+
+}
+
+fn dynamic_dispatch(x: &dyn Foo) {
+
+}
+
+struct Person<'a> {
+    name: & 'a str, // ERROR: lifetime of name not specified
+}
+
