@@ -1,6 +1,51 @@
-use std::{fmt::format, ops, u32};
+use std::{cell::RefCell, fmt::format, ops, slice::Windows, u32};
 fn main() {
     println!("inside traits");
+
+  #[derive(Debug)]
+
+  enum Months{
+    January,
+    February,
+    March
+  }
+
+  
+  impl Months{
+    fn print_month(s: &str) -> Option<Self>{
+        match s {
+            "1" => Some(Months::January),
+            "2" => Some(Months::February),
+            "3" => Some(Months::March),
+
+            _ => None
+        }
+    }
+
+    fn ab (&self) ->  {
+
+    }
+  }
+
+  let mon = Months::print_month("1");
+  println!("mon {:?}", mon);
+
+
+
+
+
+
+    // let value = RefCell::new(10);
+
+    // {
+    //     let mut borrow_mut = value.borrow_mut();
+    //     *borrow_mut += 5;
+    // }
+
+    // println!("Value: {:?}", value.borrow());
+
+ 
+
 
     // let mut s1 = Sheep::new("abc".to_string());
     // // s1.is_naked();
@@ -112,7 +157,46 @@ fn main() {
     static_dispatch(&x);
     dynamic_dispatch(&y);
     println!("Success!");
+
+    // Example 11 Closures -----------------------------------
+
+    //  let mut lights_on = false;
+    //  let mut temperature = 25;
+
+    //  let mut lights_handler = EventHandler {
+    //      on_event: || {
+    //          lights_on = !lights_on;
+    //          println!("Lights are now {}", if lights_on { "on" } else { "off" });
+    //      },
+    //  };
+
+    //  let mut temperature_handler = EventHandler {
+    //      on_event: || {
+    //          temperature += 5;
+    //          println!("Temperature increased to {}°C", temperature);
+    //      },
+    //  };
+
+    //  lights_handler.handle_event();
+    //  temperature_handler.handle_event();
+    //  temperature_handler.handle_event();
+    //  lights_handler.handle_event();
+
+    //  assert_eq!(temperature, 35);
+    //  assert_eq!(lights_on, true);
+
+
+    // Example 12  Lifetimes  -----------------------------------
+
+    let s1 = String::from("hello");
+    let s2 = String::from("world!");
+
+    let result = longest(&s1, &s2);
+    println!("Longest: {}", result);
+
+
 }
+
 
 // struct Sheep {
 //     naked: bool,
@@ -400,15 +484,39 @@ impl Foo for String {
     }
 }
 
-fn static_dispatch(x: &u8){
+fn static_dispatch(x: &u8) {}
 
-}
-
-fn dynamic_dispatch(x: &dyn Foo) {
-
-}
+fn dynamic_dispatch(x: &dyn Foo) {}
 
 struct Person<'a> {
-    name: & 'a str, // ERROR: lifetime of name not specified
+    name: &'a str, // ERROR: lifetime of name not specified
+}
+
+// Example 11 Closures -----------------------------------
+
+struct EventHandler<T>
+where
+    T: FnMut(),
+{
+    on_event: T,
+}
+
+impl<T> EventHandler<T>
+where
+    T: FnMut(),
+{
+    fn handle_event(&mut self) {
+        (self.on_event)()
+    }
+}
+
+// Example 12  Lifetimes  -----------------------------------
+
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
 }
 
